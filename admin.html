@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Love OS Admin</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-container {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 30px;
+      border-radius: 25px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .admin-container h1 {
+      text-align: center;
+      color: #f9a8d4;
+      margin-bottom: 20px;
+    }
+
+    .admin-form {
+      display: grid;
+      gap: 15px;
+    }
+
+    .admin-form input,
+    .admin-form textarea {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+    }
+
+    .admin-form button,
+    .back-btn {
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #f472b6;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .preview-grid {
+      margin-top: 25px;
+      display: grid;
+      gap: 15px;
+    }
+
+    .preview-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .preview-card img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .delete-btn {
+      margin-left: auto;
+      background: #ef4444;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-container">
+    <h1>Love OS Admin Page</h1>
+
+    <div class="admin-form">
+      <input type="file" id="photoInput" accept="image/*" />
+      <input type="text" id="photoTitle" placeholder="Memory title" />
+      <textarea id="photoDesc" placeholder="Memory description"></textarea>
+
+      <button type="button" id="saveMemoryBtn">Save Memory</button>
+      <button type="button" id="clearMemoriesBtn">Clear All Memories</button>
+      <a href="index.html" class="back-btn">Back to Love OS</a>
+    </div>
+
+    <div id="previewGrid" class="preview-grid"></div>
+  </div>
+
+  <script>
+    function getMemories() {
+      try {
+        return JSON.parse(localStorage.getItem("loveMemories")) || [];
+      } catch (error) {
+        console.warn("Saved memories could not be read.", error);
+        return [];
+      }
+    }
+
+    const photoInput = document.getElementById("photoInput");
+    const photoTitle = document.getElementById("photoTitle");
+    const photoDesc = document.getElementById("photoDesc");
+    const previewGrid = document.getElementById("previewGrid");
+    const saveMemoryBtn = document.getElementById("saveMemoryBtn");
+    const clearMemoriesBtn = document.getElementById("clearMemoriesBtn");
+
+    saveMemoryBtn.addEventListener("click", saveMemory);
+    clearMemoriesBtn.addEventListener("click", clearAllMemories);
+
+    function saveMemory() {
+      const fileInput = document.getElementById("photoInput");
+      const title = photoTitle.value.trim();
+      const desc = photoDesc.value.trim();
+
+      if (!fileInput.files[0]) {
+        alert("Please choose a photo.");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const memories = getMemories();
+
+        memories.push({
+          image: event.target.result,
+          title: title || "Untitled Memory",
+          desc: desc || "A special memory."
+        });
+
+        localStorage.setItem("loveMemories", JSON.stringify(memories));
+
+        photoInput.value = "";
+        photoTitle.value = "";
+        photoDesc.value = "";
+
+        displayMemories();
+      };
+
+      reader.readAsDataURL(fileInput.files[0]);
+    }
+
+    function displayMemories() {
+      const memories = getMemories();
+
+      previewGrid.innerHTML = "";
+
+      memories.forEach((memory, index) => {
+        const card = document.createElement("div");
+        const image = document.createElement("img");
+        const text = document.createElement("div");
+        const title = document.createElement("strong");
+        const desc = document.createElement("p");
+        const deleteButton = document.createElement("button");
+
+        card.className = "preview-card";
+        image.src = memory.image;
+        image.alt = memory.title ? `${memory.title} memory photo` : "Memory photo";
+        title.textContent = memory.title || "Untitled Memory";
+        desc.textContent = memory.desc || "A special memory.";
+
+        deleteButton.className = "delete-btn";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () => deleteMemory(index));
+
+        text.append(title, desc);
+        card.append(image, text, deleteButton);
+        previewGrid.appendChild(card);
+      });
+    }
+
+    function deleteMemory(index) {
+      const memories = getMemories();
+      memories.splice(index, 1);
+      localStorage.setItem("loveMemories", JSON.stringify(memories));
+      displayMemories();
+    }
+
+    function clearAllMemories() {
+      if (!getMemories().length) return;
+      if (!confirm("Clear all saved memories?")) return;
+
+      localStorage.removeItem("loveMemories");
+      displayMemories();
+    }
+
+    displayMemories();
+  </script>
+
+</body>
+</html>

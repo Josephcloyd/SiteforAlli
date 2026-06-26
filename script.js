@@ -178,28 +178,103 @@ function renderMemories(content) {
   memories.forEach((memory) => {
     const card = document.createElement("article");
     card.className = "memory-card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `Open ${memory.title || "memory photo"}`);
 
+    const imageWrap = document.createElement("div");
+    imageWrap.className = "memory-image-wrap";
     const image = document.createElement("img");
     image.src = memory.image;
     image.alt = memory.title ? `${memory.title} memory photo` : "Memory photo";
 
     const text = document.createElement("div");
+    text.className = "memory-text";
     const title = document.createElement("strong");
     const desc = document.createElement("p");
 
     title.textContent = memory.title || "Untitled Memory";
     desc.textContent = memory.desc || "A special memory.";
 
+    imageWrap.appendChild(image);
     text.append(title, desc);
-    card.append(image, text);
+    card.append(imageWrap, text);
+    card.addEventListener("click", () => openMemoryLightbox(memory));
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openMemoryLightbox(memory);
+      }
+    });
+
     gallery.appendChild(card);
   });
 
   content.appendChild(gallery);
 }
 
+function openMemoryLightbox(memory) {
+  closeMemoryLightbox();
+
+  const lightbox = document.createElement("div");
+  const inner = document.createElement("div");
+  const frame = document.createElement("div");
+  const image = document.createElement("img");
+  const closeButton = document.createElement("button");
+  const caption = document.createElement("div");
+  const title = document.createElement("strong");
+  const desc = document.createElement("p");
+
+  lightbox.className = "memory-lightbox";
+  lightbox.setAttribute("role", "dialog");
+  lightbox.setAttribute("aria-modal", "true");
+
+  inner.className = "memory-lightbox-inner";
+  frame.className = "memory-lightbox-frame";
+  closeButton.className = "memory-lightbox-close";
+  closeButton.type = "button";
+  closeButton.setAttribute("aria-label", "Close memory photo");
+  closeButton.innerHTML = "&times;";
+
+  image.src = memory.image;
+  image.alt = memory.title ? `${memory.title} memory photo` : "Memory photo";
+
+  caption.className = "memory-lightbox-caption";
+  title.textContent = memory.title || "Untitled Memory";
+  desc.textContent = memory.desc || "A special memory.";
+
+  caption.append(title, desc);
+  frame.append(image, closeButton);
+  inner.append(frame, caption);
+  lightbox.appendChild(inner);
+  document.body.appendChild(lightbox);
+
+  closeButton.focus();
+  closeButton.addEventListener("click", closeMemoryLightbox);
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) {
+      closeMemoryLightbox();
+    }
+  });
+}
+
+function closeMemoryLightbox() {
+  const existingLightbox = document.querySelector(".memory-lightbox");
+
+  if (existingLightbox) {
+    existingLightbox.remove();
+  }
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeMemoryLightbox();
+  }
+});
+
 function closeApp() {
   document.getElementById("window").classList.add("hidden");
+  closeMemoryLightbox();
 }
 
 function sendMessage() {

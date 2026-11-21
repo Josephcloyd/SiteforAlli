@@ -3,92 +3,177 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Love OS v1.0</title>
+  <meta name="theme-color" content="#0b0608" />
+  <title>For Bal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500&family=Pinyon+Script&display=swap" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="loader.css" />
+  <noscript>
+    <style>
+      .loader, .letterbox { display: none !important; }
+      body.is-loading { overflow: auto; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
 </head>
-<body>
+<body class="is-loading">
 
-  <div id="bootScreen" class="boot-screen">
-    <div class="boot-box">
-      <h1>Love OS v1.0</h1>
-      <p id="bootText">Initializing system...</p>
-      <div class="loading-bar">
-        <div class="loading-fill"></div>
-      </div>
+  <!-- Film texture layers -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="letterbox letterbox--top" aria-hidden="true"></div>
+  <div class="letterbox letterbox--bottom" aria-hidden="true"></div>
+  <div id="sparkles" class="sparkles" aria-hidden="true"></div>
+
+  <!-- Opening: credits, progress, sealed envelope -->
+  <div id="loader" class="loader">
+    <div class="loader-credits">
+      <p class="credit">A love letter</p>
+      <p class="credit credit--script">for Bal</p>
+      <p class="credit">written by Joseph</p>
+    </div>
+
+    <div class="loader-progress" aria-hidden="true"><span id="loaderFill"></span></div>
+    <p id="loaderStatus" class="loader-status" aria-live="polite">Gathering our memories&hellip;</p>
+
+    <div class="envelope-stage">
+      <button id="envelope" class="envelope" type="button" aria-label="Open the letter" disabled>
+        <span class="envelope-back"></span>
+        <span class="envelope-letter">for you</span>
+        <span class="envelope-front"></span>
+        <span class="envelope-flap"></span>
+        <span class="seal" aria-hidden="true">B</span>
+      </button>
+      <p class="loader-hint">Tap to open</p>
     </div>
   </div>
 
-  <main id="desktop" class="desktop hidden">
+  <main id="film" class="film" inert>
 
-    <section class="hero">
-      <h1>Welcome Bal &#10084;&#65039;</h1>
-      <p>A special little world made just for you.</p>
-    </section>
-
-    <section class="apps" aria-label="Love OS apps">
-      <button class="app" type="button" data-app="memories"><span class="app-icon">&#128248;</span><span>Memories</span></button>
-      <button class="app" type="button" data-app="letter"><span class="app-icon">&#128140;</span><span>Love Letter</span></button>
-      <button class="app" type="button" data-app="reasons"><span class="app-icon">&#127804;</span><span>Reasons</span></button>
-      <button class="app" type="button" data-app="future"><span class="app-icon">&#127769;</span><span>Future</span></button>
-      <button class="app" type="button" data-app="surprise"><span class="app-icon">&#127873;</span><span>Surprise</span></button>
-    </section>
-
-    <section id="window" class="window hidden">
-      <div class="window-top">
-        <span></span><span></span><span></span>
-        <button type="button" aria-label="Close app" onclick="closeApp()">&times;</button>
+    <!-- Scene 1: Opening shot -->
+    <section class="scene hero" aria-labelledby="heroTitle">
+      <div class="hero-media">
+        <img src="images/memories/03.jpg" alt="Joseph and Bal side by side under the trees" width="1152" height="2048" fetchpriority="high" />
       </div>
-      <div id="windowContent" class="window-content"></div>
+      <div class="hero-shade"></div>
+      <figure class="hero-portrait" aria-hidden="true">
+        <img src="images/memories/03.jpg" alt="" width="1152" height="2048" />
+      </figure>
+      <div class="hero-copy">
+        <p class="eyebrow" data-reveal>Scene one</p>
+        <h1 id="heroTitle" tabindex="-1" data-reveal style="--i: 1">
+          <span class="script">To Bal,</span>
+          with all my heart
+        </h1>
+        <p class="hero-sub" data-reveal style="--i: 2">A little film about us, made by Joseph.</p>
+        <a href="#letter" class="scroll-cue" data-reveal style="--i: 3">
+          <span>Scroll</span>
+          <span class="scroll-cue-line" aria-hidden="true"></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Scene 2: The letter -->
+    <section id="letter" class="scene letter-scene" aria-labelledby="letterTitle">
+      <header class="scene-head">
+        <p class="eyebrow" data-reveal>Scene two</p>
+        <h2 id="letterTitle" data-reveal style="--i: 1">The <span class="script">letter</span></h2>
+      </header>
+      <article class="letter-paper" data-reveal>
+        <div id="letterBody" class="letter-body"></div>
+        <p class="letter-signature script" data-reveal>&mdash; <span id="letterSignature"></span></p>
+      </article>
+    </section>
+
+    <!-- Scene 3: Our moments -->
+    <section class="scene moments" aria-labelledby="momentsTitle">
+      <header class="scene-head">
+        <p class="eyebrow" data-reveal>Scene three</p>
+        <h2 id="momentsTitle" data-reveal style="--i: 1">Our <span class="script">moments</span></h2>
+        <p data-reveal style="--i: 2">Every moment with you is a memory worth keeping. Tap one to see it up close.</p>
+      </header>
+      <ul id="momentsGrid" class="polaroids"></ul>
+    </section>
+
+    <!-- Scene 4: Reasons -->
+    <section class="scene reasons" aria-labelledby="reasonsTitle">
+      <header class="scene-head">
+        <p class="eyebrow" data-reveal>Scene four</p>
+        <h2 id="reasonsTitle" data-reveal style="--i: 1">Reasons I <span class="script">love you</span></h2>
+        <p data-reveal style="--i: 2">Turn each card over, one at a time.</p>
+      </header>
+      <ul id="reasonsGrid" class="reasons-grid"></ul>
+    </section>
+
+    <!-- Scene 5: Our future -->
+    <section class="scene future" aria-labelledby="futureTitle">
+      <div class="future-layout">
+        <figure class="future-photo" data-reveal>
+          <img src="images/memories/01.jpg" alt="Bal smiling back at the camera while walking with Joseph" width="1536" height="2048" loading="lazy" />
+        </figure>
+        <div class="future-copy">
+          <p class="eyebrow" data-reveal>Scene five</p>
+          <h2 id="futureTitle" data-reveal style="--i: 1">Our <span class="script">future</span></h2>
+          <div id="futureBody"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 6: Finale -->
+    <section id="finale" class="scene finale" aria-labelledby="foundTitle">
+      <div class="finale-inner">
+        <div id="searchLines" class="search-lines" aria-live="polite"></div>
+        <h2 id="foundTitle" class="found">Found: <span id="foundWord" class="script">You</span></h2>
+        <p class="finale-sub">You are the final surprise.</p>
+        <button id="againBtn" class="again-btn" type="button">One more time &hearts;</button>
+      </div>
+    </section>
+
+    <!-- Scene 7: The question -->
+    <section id="dateAsk" class="scene date-ask" aria-labelledby="dateTitle">
+      <div class="date-inner">
+        <p class="eyebrow" data-reveal>Scene seven</p>
+        <h2 id="dateTitle" data-reveal style="--i: 1">
+          So, Bal&hellip;
+          <span class="date-question">will you go on a <span class="script">date</span> with me?</span>
+        </h2>
+        <div id="dateChoices" class="date-choices" data-reveal style="--i: 2">
+          <button id="yesBtn" class="date-btn date-btn--yes" type="button">Yes &hearts;</button>
+          <button id="noBtn" class="date-btn date-btn--no" type="button">No</button>
+        </div>
+        <div id="dateAnswer" class="date-answer" aria-live="polite" hidden>
+          <p id="dateAnswerTitle" class="date-answer-title script"></p>
+          <p id="dateAnswerText" class="date-answer-text"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- End credits -->
+    <section id="credits" class="credits" aria-label="End credits">
+      <div id="creditsRoll" class="credits-roll">
+        <p class="credits-title script">For Bal</p>
+        <div id="creditsList" class="credits-list"></div>
+        <p class="credits-end script">To be continued&hellip;</p>
+      </div>
     </section>
 
   </main>
 
-  <div class="assistant hidden is-closed" id="assistant">
-    <button class="assistant-toggle" id="assistantToggle" type="button" aria-expanded="false" aria-controls="assistantPanel">
-      <span>Chat</span>
-    </button>
-
-    <section class="assistant-panel" id="assistantPanel" aria-label="Love OS assistant">
-      <div class="assistant-header">
-        <div>
-          <strong>Love Assistant</strong>
-          <span>Ready when you are</span>
-        </div>
-        <button type="button" id="assistantClose" aria-label="Close assistant">&times;</button>
-      </div>
-
-      <div class="chat-box" id="chatBox">
-        <div class="bot-msg">Hi! I'm Joseph's love assistant. Click an app or ask me something &#10084;&#65039;</div>
-      </div>
-
-      <div id="quickReplies" class="quick-replies" aria-label="Quick assistant actions">
-        <button type="button" data-app="memories" data-answer="Tell me about the memories">Memories</button>
-        <button type="button" data-app="letter" data-answer="Show me the love letter">Love letter</button>
-        <button type="button" data-app="reasons" data-answer="What are your reasons?">Reasons</button>
-        <button type="button" data-app="surprise" data-answer="Open the surprise">Surprise</button>
-      </div>
-
-      <div class="chat-input">
-        <input type="text" id="userInput" placeholder="Ask me..." autocomplete="off" />
-        <button type="button" id="sendMessageBtn">Send</button>
-      </div>
-    </section>
-
-    <div class="stickman" role="button" tabindex="0" aria-label="Ask the assistant for a hint">
-      <div class="head">
-        <div class="eye left-eye"></div>
-        <div class="eye right-eye"></div>
-        <div class="smile"></div>
-      </div>
-      <div class="body-line"></div>
-      <div class="arm left-arm"></div>
-      <div class="arm right-arm"></div>
-      <div class="leg left-leg"></div>
-      <div class="leg right-leg"></div>
-    </div>
+  <!-- Photo viewer -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Memory photo" hidden>
+    <button class="lightbox-btn lightbox-close" type="button" aria-label="Close photo">&times;</button>
+    <button class="lightbox-btn lightbox-prev" type="button" aria-label="Previous photo">&lsaquo;</button>
+    <figure class="lightbox-figure">
+      <img id="lightboxImg" src="" alt="" />
+      <figcaption>
+        <span id="lightboxCaption" class="lightbox-caption script"></span>
+        <span id="lightboxNote" class="lightbox-note"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox-btn lightbox-next" type="button" aria-label="Next photo">&rsaquo;</button>
   </div>
-
-  <div id="hearts"></div>
 
   <script src="script.js"></script>
 </body>

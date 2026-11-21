@@ -3,160 +3,231 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Love OS Admin</title>
+  <title>For Bal: Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500&family=Pinyon+Script&display=swap" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    body {
+      padding: 16px;
+      background: radial-gradient(ellipse at 50% 0%, var(--wine-2), var(--ink) 70%) fixed;
+    }
+
     .admin-container {
-      max-width: 800px;
-      margin: 60px auto;
-      padding: 30px;
-      border-radius: 25px;
-      background: rgba(15,23,42,0.85);
-      border: 1px solid rgba(255,255,255,0.15);
+      max-width: 760px;
+      margin: clamp(24px, 6vh, 64px) auto;
+      padding: clamp(24px, 5vw, 48px);
+      color: var(--paper-ink);
+      background: var(--paper);
+      border-radius: 2px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(216, 183, 122, 0.35) inset;
     }
 
     .admin-container h1 {
+      color: var(--wine-2);
+      font-family: var(--font-script);
+      font-size: clamp(2.4rem, 2rem + 2vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1.1;
       text-align: center;
-      color: #f9a8d4;
-      margin-bottom: 20px;
+    }
+
+    .admin-intro {
+      margin: 0.4rem 0 1.8rem;
+      color: var(--paper-muted);
+      font-style: italic;
+      text-align: center;
     }
 
     .admin-form {
       display: grid;
-      gap: 15px;
+      gap: 14px;
     }
 
     .admin-form input,
     .admin-form textarea {
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      outline: none;
+      padding: 12px 14px;
+      border: 1px solid rgba(122, 98, 88, 0.35);
+      border-radius: 2px;
+      background: #fffaf2;
+      color: var(--paper-ink);
+      font: inherit;
     }
 
-    .admin-form button,
-    .back-btn {
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: #f472b6;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
+    .admin-form input:focus-visible,
+    .admin-form textarea:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .admin-btn {
+      padding: 13px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--wine-2);
+      color: var(--gold-soft);
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
       text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .admin-btn:hover,
+    .admin-btn:focus-visible {
+      background: var(--wine-3);
+    }
+
+    .admin-btn--ghost {
+      background: transparent;
+      color: var(--wine-2);
+      box-shadow: inset 0 0 0 1px rgba(74, 20, 36, 0.4);
+    }
+
+    .admin-btn--ghost:hover,
+    .admin-btn--ghost:focus-visible {
+      background: rgba(74, 20, 36, 0.08);
     }
 
     .preview-grid {
-      margin-top: 25px;
       display: grid;
-      gap: 15px;
+      gap: 14px;
+      margin-top: 28px;
     }
 
     .preview-card {
       display: flex;
-      gap: 12px;
       align-items: center;
-      padding: 12px;
-      border-radius: 15px;
-      background: rgba(255,255,255,0.08);
+      gap: 14px;
+      padding: 10px;
+      background: #fffaf2;
+      box-shadow: 0 6px 16px rgba(58, 42, 36, 0.12);
     }
 
     .preview-card img {
-      width: 90px;
-      height: 90px;
+      width: 84px;
+      height: 84px;
       object-fit: cover;
-      border-radius: 12px;
+    }
+
+    .preview-card p {
+      color: var(--paper-muted);
+      font-style: italic;
     }
 
     .delete-btn {
       margin-left: auto;
-      background: #ef4444;
-      padding: 8px 10px;
-      border: none;
-      border-radius: 8px;
-      color: white;
+      padding: 8px 14px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--wine-3);
+      color: #fff;
+      font-family: var(--font-label);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-container">
-    <h1>Love OS Admin Page</h1>
+  <main class="admin-container">
+    <h1>Add a memory</h1>
+    <p class="admin-intro">Photos added here appear after the built-in ones in &ldquo;Our moments&rdquo;, but only in this browser on this device.</p>
 
     <div class="admin-form">
-      <input type="file" id="photoInput" accept="image/*" />
-      <input type="text" id="photoTitle" placeholder="Memory title" />
-      <textarea id="photoDesc" placeholder="Memory description"></textarea>
+      <input type="file" id="photoInput" accept="image/*" aria-label="Choose a photo" />
+      <input type="text" id="photoTitle" placeholder="Caption (shown in script under the photo)" />
+      <textarea id="photoDesc" placeholder="A short note (optional)"></textarea>
 
-      <button type="button" id="saveMemoryBtn">Save Memory</button>
-      <button type="button" id="clearMemoriesBtn">Clear All Memories</button>
-      <a href="index.html" class="back-btn">Back to Love OS</a>
+      <button type="button" id="saveMemoryBtn" class="admin-btn">Save memory</button>
+      <button type="button" id="clearMemoriesBtn" class="admin-btn admin-btn--ghost">Clear all added memories</button>
+      <a href="index.html" class="admin-btn admin-btn--ghost">Back to the letter</a>
     </div>
 
     <div id="previewGrid" class="preview-grid"></div>
-  </div>
+  </main>
 
   <script>
+    "use strict";
+
+    const STORAGE_KEY = "loveMemories";
+
+    const photoInput = document.getElementById("photoInput");
+    const photoTitle = document.getElementById("photoTitle");
+    const photoDesc = document.getElementById("photoDesc");
+    const previewGrid = document.getElementById("previewGrid");
+
+    document.getElementById("saveMemoryBtn").addEventListener("click", saveMemory);
+    document.getElementById("clearMemoriesBtn").addEventListener("click", clearAllMemories);
+
     function getMemories() {
       try {
-        return JSON.parse(localStorage.getItem("loveMemories")) || [];
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(saved) ? saved : [];
       } catch (error) {
         console.warn("Saved memories could not be read.", error);
         return [];
       }
     }
 
-    const photoInput = document.getElementById("photoInput");
-    const photoTitle = document.getElementById("photoTitle");
-    const photoDesc = document.getElementById("photoDesc");
-    const previewGrid = document.getElementById("previewGrid");
-    const saveMemoryBtn = document.getElementById("saveMemoryBtn");
-    const clearMemoriesBtn = document.getElementById("clearMemoriesBtn");
-
-    saveMemoryBtn.addEventListener("click", saveMemory);
-    clearMemoriesBtn.addEventListener("click", clearAllMemories);
+    function storeMemories(memories) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(memories));
+        return true;
+      } catch (error) {
+        console.warn("Memories could not be saved.", error);
+        alert("That photo could not be saved. Browser storage may be full, so try a smaller photo.");
+        return false;
+      }
+    }
 
     function saveMemory() {
-      const fileInput = document.getElementById("photoInput");
-      const title = photoTitle.value.trim();
-      const desc = photoDesc.value.trim();
+      const file = photoInput.files[0];
 
-      if (!fileInput.files[0]) {
+      if (!file) {
         alert("Please choose a photo.");
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please choose an image file.");
         return;
       }
 
       const reader = new FileReader();
 
-      reader.onload = function(event) {
-        const memories = getMemories();
+      reader.onload = (event) => {
+        const memories = [
+          ...getMemories(),
+          {
+            image: event.target.result,
+            title: photoTitle.value.trim() || "A special memory",
+            desc: photoDesc.value.trim()
+          }
+        ];
 
-        memories.push({
-          image: event.target.result,
-          title: title || "Untitled Memory",
-          desc: desc || "A special memory."
-        });
-
-        localStorage.setItem("loveMemories", JSON.stringify(memories));
+        if (!storeMemories(memories)) return;
 
         photoInput.value = "";
         photoTitle.value = "";
         photoDesc.value = "";
-
         displayMemories();
       };
 
-      reader.readAsDataURL(fileInput.files[0]);
+      reader.onerror = () => alert("That photo could not be read. Please try another one.");
+      reader.readAsDataURL(file);
     }
 
     function displayMemories() {
-      const memories = getMemories();
+      previewGrid.replaceChildren();
 
-      previewGrid.innerHTML = "";
-
-      memories.forEach((memory, index) => {
+      getMemories().forEach((memory, index) => {
         const card = document.createElement("div");
         const image = document.createElement("img");
         const text = document.createElement("div");
@@ -167,8 +238,8 @@
         card.className = "preview-card";
         image.src = memory.image;
         image.alt = memory.title ? `${memory.title} memory photo` : "Memory photo";
-        title.textContent = memory.title || "Untitled Memory";
-        desc.textContent = memory.desc || "A special memory.";
+        title.textContent = memory.title || "A special memory";
+        desc.textContent = memory.desc || "";
 
         deleteButton.className = "delete-btn";
         deleteButton.type = "button";
@@ -182,17 +253,15 @@
     }
 
     function deleteMemory(index) {
-      const memories = getMemories();
-      memories.splice(index, 1);
-      localStorage.setItem("loveMemories", JSON.stringify(memories));
-      displayMemories();
+      const remaining = getMemories().filter((_, i) => i !== index);
+      if (storeMemories(remaining)) displayMemories();
     }
 
     function clearAllMemories() {
       if (!getMemories().length) return;
-      if (!confirm("Clear all saved memories?")) return;
+      if (!confirm("Clear all added memories? The built-in photos stay.")) return;
 
-      localStorage.removeItem("loveMemories");
+      localStorage.removeItem(STORAGE_KEY);
       displayMemories();
     }
 
